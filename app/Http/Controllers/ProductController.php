@@ -6,7 +6,6 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -98,56 +97,7 @@ class ProductController extends Controller
             return redirect('product')->with('error', 'Product not found');
         }
     }
-    //update function
-    // public function update(Request $request, $id)
-    // {
-
-
-    //     //user_id
-    //     $userId = Auth::user()->id;
-    //     //find product by the id from the (url/params)
-    //     $product = Product::find($id);
-    //     //$product = Product::where('id', $id)->where('user_id', $userId)->first();
-
-    //     //if checking the product
-    //     if (!$product) {
-    //         return redirect('product')->with('error', 'Product not found.');
-    //     }
-    //     $validatedData = $request->validate([
-    //         'title' => 'required|max:255',
-    //         'description' => 'required',
-    //         'status' => 'required',
-    //         'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:2048',
-    //         'expire_at' => 'required',
-    //     ]);
-
-    //     if ($request->hasFile('image')) 
-    //     {
-    //         $imageName = time() . '.' . $request->image->extension();
-    //         $oldImagePath = $product->image;
-    //         // $oldImagePath = 
-    //         $request->image->move(public_path('images'), $imageName);
-    //         if($request->image){
-    //             Storage::delete(public_path('images'),$oldImagePath);
-    //         }
-    //     }else{
-    //         $imageName = $request->image;
-    //         $imageName = time() . '.' . $request->image->extension();
-    //         $request->image->move(public_path('images'), $imageName);
-    //     }
-
-    //     //getting the inputs
-    //     // $validatedData['image'] = $imageName;
-    //     $validatedData['user_id'] = $userId;
-
-    //     $productStatus = $product->update($validatedData);
-
-    //     if ($productStatus) {
-    //         return redirect('product')->with('success', 'Product successfully updated.');
-    //     } else {
-    //         return redirect('product')->with('error', 'Oops something went wrong. Product not updated');
-    //     }
-    // }
+ 
     public function update(Request $request, $id)
     {
         $userId = Auth::user()->id;
