@@ -24,7 +24,7 @@ class HomeController extends Controller
     public function index()
     {
         if (auth()) {
-            return redirect('todo');
+            return redirect('product');
         }
         return redirect('login');
     }
