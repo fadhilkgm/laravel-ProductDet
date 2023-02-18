@@ -20,9 +20,9 @@
               </ul>
           </div>
       @endif
-      <form action="{{ route('product.store') }}" method="POST">
+      <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="form-group" enctype="multipart/form-data" >
+        <div class="form-group"  >
           <label for="title">Title:</label>
           <input type="text" placeholder="Enter the title" class="form-control" id="title" name="title">
         </div>
@@ -40,9 +40,14 @@
         
   
         
-        <div class="form-group">
+        {{-- <div class="form-group">
           <label for="image">Image</label>
           <input type="text" placeholder="Enter the URL" class="form-control" id="image" name="image">
+       </div> --}}
+
+        <div class="form-group">
+          <label for="image">Image</label>
+          <input type="file" class="form-control" id="image" name="image">
        </div>
 
         <div class="form-group">

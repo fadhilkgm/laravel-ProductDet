@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -36,15 +38,20 @@ class ProductController extends Controller
             'title' => 'required|max:255',
             'description' => 'required',
             'status' => 'required',
-            'image' => 'required',
+            'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:2048',
             'expire_at' => 'required|date',
         ]);
+
+
+        $imageName = time() . '.' . $request->image->extension();
+        $request->image->move(public_path('images'), $imageName);
 
         // Save the image to the server and get the file path
 
 
         // Add the user_id and image_path to the validated data
         $validatedData['user_id'] = $userId;
+        $validatedData['image'] = $imageName;
 
         // Create the product
         $product = Product::create($validatedData);
@@ -92,28 +99,80 @@ class ProductController extends Controller
         }
     }
     //update function
+    // public function update(Request $request, $id)
+    // {
+
+
+    //     //user_id
+    //     $userId = Auth::user()->id;
+    //     //find product by the id from the (url/params)
+    //     $product = Product::find($id);
+    //     //$product = Product::where('id', $id)->where('user_id', $userId)->first();
+
+    //     //if checking the product
+    //     if (!$product) {
+    //         return redirect('product')->with('error', 'Product not found.');
+    //     }
+    //     $validatedData = $request->validate([
+    //         'title' => 'required|max:255',
+    //         'description' => 'required',
+    //         'status' => 'required',
+    //         'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:2048',
+    //         'expire_at' => 'required',
+    //     ]);
+
+    //     if ($request->hasFile('image')) 
+    //     {
+    //         $imageName = time() . '.' . $request->image->extension();
+    //         $oldImagePath = $product->image;
+    //         // $oldImagePath = 
+    //         $request->image->move(public_path('images'), $imageName);
+    //         if($request->image){
+    //             Storage::delete(public_path('images'),$oldImagePath);
+    //         }
+    //     }else{
+    //         $imageName = $request->image;
+    //         $imageName = time() . '.' . $request->image->extension();
+    //         $request->image->move(public_path('images'), $imageName);
+    //     }
+
+    //     //getting the inputs
+    //     // $validatedData['image'] = $imageName;
+    //     $validatedData['user_id'] = $userId;
+
+    //     $productStatus = $product->update($validatedData);
+
+    //     if ($productStatus) {
+    //         return redirect('product')->with('success', 'Product successfully updated.');
+    //     } else {
+    //         return redirect('product')->with('error', 'Oops something went wrong. Product not updated');
+    //     }
+    // }
     public function update(Request $request, $id)
     {
-
-
-        //user_id
         $userId = Auth::user()->id;
-        //find product by the id from the (url/params)
-        $product = Product::find($id);
 
-        //if checking the product
+        $product = Product::where(['user_id' => $userId, 'id' => $id])->first();
+
         if (!$product) {
             return redirect('product')->with('error', 'Product not found.');
         }
+
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
             'status' => 'required',
-            'expire_at' => 'required',
-            'image' => 'required',
+            'image' => 'image|mimes:jpg,png,jpeg,gif|max:5000',
+            'expire_at' => 'required|date',
         ]);
-        //getting the inputs
-        $validatedData['user_id'] = $userId;
+
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $validatedData['image'] = $imageName;
+            $fileName = public_path('images/'. $product->image);
+            File::delete($fileName);
+        }
 
         $productStatus = $product->update($validatedData);
 
@@ -122,6 +181,8 @@ class ProductController extends Controller
         } else {
             return redirect('product')->with('error', 'Oops something went wrong. Product not updated');
         }
+
+        return redirect('product')->with('success', 'Product successfully updated.');
     }
 
 
@@ -132,6 +193,9 @@ class ProductController extends Controller
         $userId = Auth::user()->id;
         //getting the specific product created by the user
         $product = Product::where(['user_id' => $userId, 'id' => $id])->first();
+        $fileName = public_path('images/'.$product->image);
+        File::delete($fileName);
+
         //response status = response message = ' '
         $respStatus = $respMsg = '';
         //if product does not exists the set respStatus to error and response message to not found
@@ -139,6 +203,7 @@ class ProductController extends Controller
             $respStatus = 'error';
             $respMsg = 'Product not found';
         }
+
         //setting the productDelStatus = taking the product then calling delete function 
         $productDelStatus = $product->delete();
         //setting the respStatus according to the productDelStatus

@@ -22,7 +22,7 @@
               </ul>
           </div>
       @endif
-      <form action="{{ route('product.update', [$product->id]) }}" method="POST">
+      <form action="{{ route('product.update', [$product->id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
                 @method('PUT')
         <div class="form-group">
@@ -41,10 +41,20 @@
         </select>
         </div>
 
-        <div class="form-group">
-          <label for="image">Image</label>
-          <input type="text" placeholder="Enter the URL" class="form-control" id="image" name="image" value="{{$product->image}}">
-       </div>
+        <div class="form-group{{ $errors->has('image') ? ' has-error' : '' }}">
+          <label for="image" class="col-md-4 control-label">Image</label>
+          <div class="col-md-6">
+              <input id="image" type="file" class="form-control" name="image">
+              @if ($errors->has('image'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('image') }}</strong>
+                  </span>
+              @endif
+              @if ($product->image)
+                  <img src="{{ asset('images/'.$product->image) }}" alt="{{ $product->title }}" width="200">
+              @endif
+          </div>
+      </div>
 
         <div class="form-group">
           <label for="Date">Exipre At:</label>

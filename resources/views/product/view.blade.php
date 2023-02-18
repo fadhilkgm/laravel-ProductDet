@@ -28,7 +28,8 @@
                 <strong>Status: </strong> {{ $product->status }}
             </div>
             <div class="product-image">
-                <strong>Image: </strong><img class="m-4" src={{ $product->image }} width="300px" alt=""> 
+                <strong>Image: </strong>
+                <img class="m-4" src="{{ asset('images/'.$product->image) }}" width="300px" alt=""> 
             </div>
             <div class="product-expire-at">
                 <strong>Expire At: </strong> {{ $product->expire_at }}

@@ -48,7 +48,7 @@
                             <tr>
                                 <th>{{ ++$i }}</th>
                                 <td>{{ $product->title }}</td>
-                                <td><img src="{{$product->image}}" alt="{{ $product->title }}" width="200px"></td>
+                                <td><img src="{{asset('images/'.$product->image) }}" alt="{{ $product->title }}" width="200px"></td>
 
                                 <td>
                                     <center>{{ $product->status }}</center>
